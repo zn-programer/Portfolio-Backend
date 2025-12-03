@@ -1,6 +1,9 @@
 /** @format */
 
-const serverless = require("serverless-http")
+// const uploadRouter = require("../upload")
+const createUploadthing = require("uploadthing");
+const f = createUploadthing();
+const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -53,12 +56,21 @@ app.post(
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
+
+    let imageUrl = null;
+    if (req.files && req.files.img) {
+      const uploaded = await f.upload(req.files.img[0].buffer, {
+        fileNmae: req.files.img[0].originalname,
+        mimeType: req.files.img[0].mimetype,
+      });
+      imageUrl = uploaded.url;
+    }
     const { title, description, link } = projectData;
     const project = new Project({
       title,
       description,
       link,
-      img: req.file ? "/uploads/" + req.file.filename : null,
+      img: imageUrl,
     });
     const result = await project.save();
     res.status(201).json(result);
@@ -110,7 +122,6 @@ app.delete(
 
 app.use(notFound);
 app.use(errorHandler);
-
 
 const handler = serverless(app);
 export default handler;
