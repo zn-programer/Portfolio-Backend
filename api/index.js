@@ -59,7 +59,7 @@ app.post(
     let imageUrl = null;
     if (req.file) {
      const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
-      const uploaded = await utapi.uploadFiles(blod , {
+      const uploaded = await utapi.uploadFiles(blob , {
         filename: req.file.originalname
       });
       imageUrl = uploaded.data.url;
