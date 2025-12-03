@@ -1,8 +1,7 @@
 /** @format */
 
-// const uploadRouter = require("../upload")
-const createUploadthing = require("uploadthing");
-const f = createUploadthing();
+const { UTApi } = require("uploadthing/server");
+const utapi = new UTApi()
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
@@ -37,7 +36,7 @@ const storage = multer.diskStorage({
   },
 });
 
-const upload = multer({ storage });
+const upload = multer({ storage: multer.memoryStorage() });
 
 app.get(
   "/api/projects",
@@ -58,12 +57,11 @@ app.post(
     }
 
     let imageUrl = null;
-    if (req.files && req.files.img) {
-      const uploaded = await f.upload(req.files.img[0].buffer, {
-        fileNmae: req.files.img[0].originalname,
-        mimeType: req.files.img[0].mimetype,
+    if (req.files) {
+      const uploaded = await utapi.uploadFiles(req.file.buffer, {
+        fileNmae: req.file.originalname,
       });
-      imageUrl = uploaded.url;
+      imageUrl = uploaded.data.url;
     }
     const { title, description, link } = projectData;
     const project = new Project({
