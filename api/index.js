@@ -1,6 +1,7 @@
 /** @format */
 
 const { UTApi } = require("uploadthing/server");
+const { Blob } = require("buffer");
 const utapi = new UTApi();
 const serverless = require("serverless-http");
 const express = require("express");
