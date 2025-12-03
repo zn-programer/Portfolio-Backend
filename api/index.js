@@ -28,14 +28,14 @@ app.use(cors());
 app.use(express.json());
 console.log("this is my file");
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "uploads");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + path.extname(file.originalname));
-  },
-});
+// const storage = multer.diskStorage({
+//   destination: (req, file, cb) => {
+//     cb(null, "uploads");
+//   },
+//   filename: (req, file, cb) => {
+//     cb(null, Date.now() + path.extname(file.originalname));
+//   },
+// });
 
 const upload = multer({ storage: multer.memoryStorage() });
 
@@ -59,9 +59,10 @@ app.post(
 
     let imageUrl = null;
     if (req.file) {
-     const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
-      const uploaded = await utapi.uploadFiles(blob , {
-        filename: req.file.originalname
+      const uploaded = await utapi.uploadFiles({
+        name: req.file.originalname,
+        type: req.file.mimetype,
+        buffer: req.file.buffer,
       });
       imageUrl = uploaded.data.url;
     }
