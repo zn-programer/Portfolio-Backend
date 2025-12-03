@@ -58,10 +58,10 @@ app.post(
 
     let imageUrl = null;
     if (req.file) {
-      const file = new File([req.file.buffer], req.file.originalname, {
-        type: req.file.mimetype,
+     const blob = new Blob([req.file.buffer], { type: req.file.mimetype });
+      const uploaded = await utapi.uploadFiles(blod , {
+        filename: req.file.originalname
       });
-      const uploaded = await utapi.uploadFiles(file);
       imageUrl = uploaded.data.url;
     }
     const { title, description, link } = projectData;
