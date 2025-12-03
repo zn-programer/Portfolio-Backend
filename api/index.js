@@ -1,5 +1,6 @@
 /** @format */
 
+const serverless = require("serverless-http")
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 4000;
@@ -111,4 +112,5 @@ app.use(notFound);
 app.use(errorHandler);
 
 
-module.exports = app;
+const handler = serverless(app);
+export default handler;

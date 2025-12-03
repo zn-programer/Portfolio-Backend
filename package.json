@@ -17,6 +17,7 @@
     "express-async-handler": "^1.2.0",
     "joi": "^18.0.2",
     "mongoose": "^9.0.0",
-    "multer": "^2.0.2"
+    "multer": "^2.0.2",
+    "serverless-http": "^4.0.0"
   }
 }
