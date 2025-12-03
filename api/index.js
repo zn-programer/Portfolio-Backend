@@ -1,7 +1,7 @@
 /** @format */
 
 const { UTApi } = require("uploadthing/server");
-const utapi = new UTApi()
+const utapi = new UTApi();
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
@@ -57,10 +57,11 @@ app.post(
     }
 
     let imageUrl = null;
-    if (req.files) {
-      const uploaded = await utapi.uploadFiles(req.file.buffer, {
-        fileNmae: req.file.originalname,
+    if (req.file) {
+      const file = new File([req.file.buffer], req.file.originalname, {
+        type: req.file.mimetype,
       });
+      const uploaded = await utapi.uploadFiles(file);
       imageUrl = uploaded.data.url;
     }
     const { title, description, link } = projectData;
