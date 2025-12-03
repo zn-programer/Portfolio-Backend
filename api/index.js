@@ -3,7 +3,7 @@
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 4000;
-const { notFound, errorHandler } = require("./middlewares/errorsHandler");
+const { notFound, errorHandler } = require("../middlewares/errorsHandler");
 const asyncHandler = require("express-async-handler");
 const cors = require("cors");
 const multer = require("multer");
@@ -12,8 +12,8 @@ const {
   Project,
   validationCreateNewProject,
   validationUpdateProject,
-} = require("./models/Projects");
-const connectToDb = require("./config/db");
+} = require("../models/Projects");
+const connectToDb = require("../config/db");
 const { json } = require("stream/consumers");
 
 require("dotenv").config();
@@ -110,6 +110,5 @@ app.delete(
 app.use(notFound);
 app.use(errorHandler);
 
-app.listen(process.env.PORT, () => {
-  console.log(`Server Running On Port ${process.env.PORT}`);
-});
+
+module.exports = app;
