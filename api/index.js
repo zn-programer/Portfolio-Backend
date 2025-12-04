@@ -59,14 +59,22 @@ app.post(
 
     let imageUrl = null;
     if (req.file) {
-      const uploaded = await utapi.uploadFiles([
-        {
-          name: req.file.originalname,
-          type: req.file.mimetype,
-          data: req.file.buffer, // انتبه: اسم المفتاح data وليس buffer
-        },
-      ]);
-      imageUrl = uploaded[0].url;
+      const FormData = require("form-data");
+      const axios = require("axios");
+      const form = new FormData();
+      form.append("UPLOADCARE_PUB_KEY", process.env.UPLOADCARE_PUBLIC_KEY);
+      form.append("UPLOADCARE_STORE", "auto");
+      form.append("file", req.file.buffer, {
+        filename: req.file.originalname,
+        contentType: req.file.mimetype,
+      });
+      const uploadRes = await axios.post(
+        "https://upload.uploadcare.com/base/",
+        form,
+        { headers: form.getHeaders() }
+      );
+      const fileUUID = uploadRes.data.file;
+      imageUrl = `https://ucarecdn.com/${fileUUID}/`;
     }
     const { title, description, link } = projectData;
     const project = new Project({
