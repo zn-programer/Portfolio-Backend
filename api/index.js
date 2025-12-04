@@ -49,6 +49,9 @@ app.post(
   "/api/projects",
   upload.single("img"),
   asyncHandler(async (req, res) => {
+    try {
+      
+   
     const projectData = JSON.parse(req.body.project);
     const { error } = validationCreateNewProject(projectData);
     if (error) {
@@ -58,9 +61,11 @@ app.post(
     let imageUrl = null;
     if (req.file) {
       const uploadRes = await f.upload({
-        file: req.file, // multer file object
-        type: "image", // نوع الملف
-      });
+          file: req.file.buffer,
+          type: "image",
+          filename: req.file.originalname,
+          mimetype: req.file.mimetype,
+        });
       imageUrl = uploadRes.url;
     }
     const { title, description, link } = projectData;
@@ -72,6 +77,9 @@ app.post(
     });
     const result = await project.save();
     res.status(201).json(result);
+  } catch (error) {
+     console.error("kharea", error);
+   }
   })
 );
 
