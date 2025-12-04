@@ -1,8 +1,6 @@
 /** @format */
 
-const { UTApi } = require("uploadthing/server");
-const { Blob } = require("buffer");
-const utapi = new UTApi();
+const f = require("../upload");
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
@@ -27,6 +25,8 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors());
 app.use(express.json());
 console.log("this is my file");
+const storage = multer.memoryStorage();
+const upload = multer({ storage });
 
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -36,8 +36,6 @@ console.log("this is my file");
 //     cb(null, Date.now() + path.extname(file.originalname));
 //   },
 // });
-
-const upload = multer({ storage: multer.memoryStorage() });
 
 app.get(
   "/api/projects",
@@ -59,22 +57,11 @@ app.post(
 
     let imageUrl = null;
     if (req.file) {
-      const FormData = require("form-data");
-      const axios = require("axios");
-      const form = new FormData();
-      form.append("UPLOADCARE_PUB_KEY", process.env.UPLOADCARE_PUBLIC_KEY);
-      form.append("UPLOADCARE_STORE", "auto");
-      form.append("file", req.file.buffer, {
-        filename: req.file.originalname,
-        contentType: req.file.mimetype,
+      const uploadRes = await f.upload({
+        file: req.file, // multer file object
+        type: "image", // نوع الملف
       });
-      const uploadRes = await axios.post(
-        "https://upload.uploadcare.com/base/",
-        form,
-        { headers: form.getHeaders() }
-      );
-      const fileUUID = uploadRes.data.file;
-      imageUrl = `https://ucarecdn.com/${fileUUID}/`;
+      imageUrl = uploadRes.url;
     }
     const { title, description, link } = projectData;
     const project = new Project({
