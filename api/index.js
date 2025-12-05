@@ -25,17 +25,9 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors());
 app.use(express.json());
 console.log("this is my file");
-const storage = multer.memoryStorage();
-const upload = multer({ storage });
 
-// const storage = multer.diskStorage({
-//   destination: (req, file, cb) => {
-//     cb(null, "uploads");
-//   },
-//   filename: (req, file, cb) => {
-//     cb(null, Date.now() + path.extname(file.originalname));
-//   },
-// });
+
+
 
 app.get(
   "/api/projects",
@@ -47,39 +39,21 @@ app.get(
 
 app.post(
   "/api/projects",
-  upload.single("img"),
   asyncHandler(async (req, res) => {
-    try {
-      
-   
     const projectData = JSON.parse(req.body.project);
     const { error } = validationCreateNewProject(projectData);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-
-    let imageUrl = null;
-    if (req.file) {
-      const uploadRes = await f.upload({
-          file: req.file.buffer,
-          type: "image",
-          filename: req.file.originalname,
-          mimetype: req.file.mimetype,
-        });
-      imageUrl = uploadRes.url;
-    }
-    const { title, description, link } = projectData;
+    const { title, description, link, img } = projectData;
     const project = new Project({
       title,
       description,
       link,
-      img: imageUrl,
+      img,
     });
     const result = await project.save();
     res.status(201).json(result);
-  } catch (error) {
-     console.error("kharea", error);
-   }
   })
 );
 
