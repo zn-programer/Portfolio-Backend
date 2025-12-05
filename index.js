@@ -1,6 +1,5 @@
 /** @format */
 
-
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
@@ -15,7 +14,6 @@ const {
   validationUpdateProject,
 } = require("./models/Projects");
 const connectToDb = require("./config/db");
-const { json } = require("stream/consumers");
 
 require("dotenv").config();
 // CONNECT TO DB
@@ -25,9 +23,6 @@ app.use(cors());
 app.use(express.json());
 console.log("this is my file");
 
-
-
-
 app.get(
   "/api/projects",
   asyncHandler(async (req, res) => {
@@ -35,7 +30,9 @@ app.get(
     res.status(200).json(projectsList);
   })
 );
-
+app.get("/", (req, res) => {
+  res.send("API is running...");
+});
 app.post(
   "/api/projects",
   asyncHandler(async (req, res) => {
@@ -44,10 +41,10 @@ app.post(
       return res.status(400).json({ message: error.details[0].message });
     }
     const project = new Project({
-      title:req.body.title,
-      description:req.body.description,
-      link:req.body.link,
-      img:req.body.img,
+      title: req.body.title,
+      description: req.body.description,
+      link: req.body.link,
+      img: req.body.img,
     });
     const result = await project.save();
     res.status(201).json(result);
@@ -65,10 +62,10 @@ app.put(
       req.params.id,
       {
         $set: {
-          title:req.body.title,
-          description:req.body.description,
-          link:req.body.link,
-          img:req.body.img,
+          title: req.body.title,
+          description: req.body.description,
+          link: req.body.link,
+          img: req.body.img,
         },
       },
       { new: true }
