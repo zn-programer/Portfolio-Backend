@@ -40,17 +40,15 @@ app.get(
 app.post(
   "/api/projects",
   asyncHandler(async (req, res) => {
-    const projectData = JSON.parse(req.body.project);
     const { error } = validationCreateNewProject(projectData);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { title, description, link, img } = projectData;
     const project = new Project({
-      title,
-      description,
-      link,
-      img,
+      title:req.body.title,
+      description:req.body.description,
+      link:req.body.link,
+      img:req.body.img,
     });
     const result = await project.save();
     res.status(201).json(result);
