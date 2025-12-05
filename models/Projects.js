@@ -31,6 +31,7 @@ function validationCreateNewProject(object) {
     title: joi.string().required(),
     description: joi.string().required(),
     link: joi.string().required(),
+    img: joi.string().required(),
   });
   return schema.validate(object);
 }
