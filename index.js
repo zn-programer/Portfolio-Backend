@@ -1,6 +1,6 @@
 /** @format */
 
-const f = require("./upload");
+
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
@@ -8,7 +8,6 @@ const PORT = process.env.PORT || 4000;
 const { notFound, errorHandler } = require("./middlewares/errorsHandler");
 const asyncHandler = require("express-async-handler");
 const cors = require("cors");
-const multer = require("multer");
 const path = require("path");
 const {
   Project,
