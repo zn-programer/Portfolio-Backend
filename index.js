@@ -56,22 +56,19 @@ app.post(
 
 app.put(
   "/api/projects/:id",
-  upload.single("img"),
   asyncHandler(async (req, res) => {
-    const projectData = JSON.parse(req.body.project);
     const { error } = validationUpdateProject(projectData);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
-    const { title, description, link } = projectData;
     const updatedproject = await Project.findByIdAndUpdate(
       req.params.id,
       {
         $set: {
-          title,
-          description,
-          link,
-          img: req.file ? "/uploads/" + req.file.filename : projectData.img,
+          title:req.body.title,
+          description:req.body.description,
+          link:req.body.link,
+          img:req.body.img,
         },
       },
       { new: true }
