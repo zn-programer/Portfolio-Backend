@@ -94,4 +94,4 @@ app.use(notFound);
 app.use(errorHandler);
 
 const handler = serverless(app);
-export default handler;
+module.exports = handler;
