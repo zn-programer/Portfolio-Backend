@@ -23,7 +23,7 @@ app.use(express.json());
 console.log("this is my file");
 
 app.get(
-  "/api/projects",
+  "/projects",
   asyncHandler(async (req, res) => {
     const projectsList = await Project.find();
     res.status(200).json(projectsList);
