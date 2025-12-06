@@ -4,7 +4,7 @@ const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 4000;
-const { notFound, errorHandler } = require("./middlewares/errorsHandler");
+const { notFound, errorHandler } = require("../middlewares/errorsHandler");
 const asyncHandler = require("express-async-handler");
 const cors = require("cors");
 const path = require("path");
@@ -12,8 +12,8 @@ const {
   Project,
   validationCreateNewProject,
   validationUpdateProject,
-} = require("./models/Projects");
-const connectToDb = require("./config/db");
+} = require("../models/Projects");
+const connectToDb = require("../config/db");
 
 require("dotenv").config();
 // CONNECT TO DB
