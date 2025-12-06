@@ -13,12 +13,12 @@ const {
   validationCreateNewProject,
   validationUpdateProject,
 } = require("../models/Projects");
+app.use(cors());
 const connectToDb = require("../config/db");
 
 require("dotenv").config();
 // CONNECT TO DB
 connectToDb();
-app.use(cors());
 app.use(express.json());
 console.log("this is my file");
 
