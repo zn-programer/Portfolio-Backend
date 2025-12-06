@@ -18,7 +18,6 @@ const connectToDb = require("../config/db");
 require("dotenv").config();
 // CONNECT TO DB
 connectToDb();
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(cors());
 app.use(express.json());
 console.log("this is my file");
@@ -36,7 +35,7 @@ app.get("/", (req, res) => {
 app.post(
   "/api/projects",
   asyncHandler(async (req, res) => {
-    const { error } = validationCreateNewProject(projectData);
+    const { error } = validationCreateNewProject(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
@@ -54,7 +53,7 @@ app.post(
 app.put(
   "/api/projects/:id",
   asyncHandler(async (req, res) => {
-    const { error } = validationUpdateProject(projectData);
+    const { error } = validationUpdateProject(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
