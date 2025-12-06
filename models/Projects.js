@@ -40,6 +40,7 @@ function validationUpdateProject(object) {
     title: joi.string(),
     description: joi.string(),
     link: joi.string(),
+    img: joi.string(),
   });
   return schema.validate(object);
 }
