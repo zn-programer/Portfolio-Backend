@@ -24,10 +24,16 @@ console.log("this is my file");
 
 app.get(
   "/api/projects",
-  asyncHandler(async (req, res) => {
-    const projectsList = await Project.find();
-    res.status(200).json(projectsList);
-  })
+  async (req, res) => { // حذفنا asyncHandler
+    try {
+      const projectsList = await Project.find();
+      console.log("Data fetched successfully.");
+      res.status(200).json(projectsList);
+    } catch (error) {
+      console.error("GET route failed:", error); // هذا سيظهر في سجلات Vercel
+      res.status(500).json({ message: "Error fetching data." });
+    }
+  }
 );
 app.post(
   "/api/projects",
