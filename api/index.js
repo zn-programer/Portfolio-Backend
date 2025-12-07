@@ -1,5 +1,10 @@
 /** @format */
 
+// const uploadRouter = require("../upload")
+const createUploadthing = require("uploadthing");
+const f = createUploadthing();
+const { UTApi } = require("uploadthing/server");
+const utapi = new UTApi()
 const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
@@ -7,20 +12,35 @@ const PORT = process.env.PORT || 4000;
 const { notFound, errorHandler } = require("../middlewares/errorsHandler");
 const asyncHandler = require("express-async-handler");
 const cors = require("cors");
+const multer = require("multer");
 const path = require("path");
 const {
   Project,
   validationCreateNewProject,
   validationUpdateProject,
 } = require("../models/Projects");
-app.use(cors());
 const connectToDb = require("../config/db");
+const { json } = require("stream/consumers");
 
 require("dotenv").config();
 // CONNECT TO DB
+connectToDb();
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(cors());
 app.use(express.json());
 console.log("this is my file");
-connectToDb();
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, "uploads");
+  },
+  filename: (req, file, cb) => {
+    cb(null, Date.now() + path.extname(file.originalname));
+  },
+});
+
+// const upload = multer({ storage });
+// const upload = multer({ storage: multer.memoryStorage() });
 
 app.get(
   "/api/projects",
@@ -29,39 +49,59 @@ app.get(
     res.status(200).json(projectsList);
   })
 );
-app.post(
-  "/api/projects",
-  asyncHandler(async (req, res) => {
-    const { error } = validationCreateNewProject(req.body);
-    if (error) {
-      return res.status(400).json({ message: error.details[0].message });
-    }
-    const project = new Project({
-      title: req.body.title,
-      description: req.body.description,
-      link: req.body.link,
-      img: req.body.img,
-    });
-    const result = await project.save();
-    res.status(201).json(result);
-  })
-);
+
+// app.post(
+//   "/api/projects",
+//   upload.single("img"),
+//   asyncHandler(async (req, res) => {
+//     const projectData = JSON.parse(req.body.project);
+//     const { error } = validationCreateNewProject(projectData);
+//     if (error) {
+//       return res.status(400).json({ message: error.details[0].message });
+//     }
+
+//     let imageUrl = null;
+//     if (req.files && req.files.img) {
+//       const uploaded = await f.upload(req.files.img[0].buffer, {
+//         fileNmae: req.files.img[0].originalname,
+//         mimeType: req.files.img[0].mimetype,
+//     if (req.files) {
+//       const uploaded = await utapi.uploadFiles(req.file.buffer, {
+//         fileNmae: req.file.originalname,
+//       });
+//       imageUrl = uploaded.url;
+//       imageUrl = uploaded.data.url;
+//     }
+//     const { title, description, link } = projectData;
+//     const project = new Project({
+//       title,
+//       description,
+//       link,
+//       img: imageUrl,
+//     });
+//     const result = await project.save();
+//     res.status(201).json(result);
+//   })
+// );
 
 app.put(
   "/api/projects/:id",
+  upload.single("img"),
   asyncHandler(async (req, res) => {
-    const { error } = validationUpdateProject(req.body);
+    const projectData = JSON.parse(req.body.project);
+    const { error } = validationUpdateProject(projectData);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
     }
+    const { title, description, link } = projectData;
     const updatedproject = await Project.findByIdAndUpdate(
       req.params.id,
       {
         $set: {
-          title: req.body.title,
-          description: req.body.description,
-          link: req.body.link,
-          img: req.body.img,
+          title,
+          description,
+          link,
+          img: req.file ? "/uploads/" + req.file.filename : projectData.img,
         },
       },
       { new: true }
@@ -91,4 +131,4 @@ app.use(notFound);
 app.use(errorHandler);
 
 const handler = serverless(app);
-module.exports = handler;
+export default handler;
