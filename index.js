@@ -13,7 +13,6 @@ const {
 } = require("./models/Projects");
 app.use(cors());
 const connectToDb = require("./config/db");
-const { Route } = require("express");
 
 require("dotenv").config();
 // CONNECT TO DB
