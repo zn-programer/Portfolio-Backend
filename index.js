@@ -1,13 +1,11 @@
 /** @format */
 
-const serverless = require("serverless-http");
 const express = require("express");
 const app = express();
 const PORT = process.env.PORT || 4000;
 const { notFound, errorHandler } = require("./middlewares/errorsHandler");
 const asyncHandler = require("express-async-handler");
 const cors = require("cors");
-const path = require("path");
 const {
   Project,
   validationCreateNewProject,
@@ -15,6 +13,7 @@ const {
 } = require("./models/Projects");
 app.use(cors());
 const connectToDb = require("./config/db");
+const { Route } = require("express");
 
 require("dotenv").config();
 // CONNECT TO DB
@@ -87,12 +86,9 @@ app.delete(
   })
 );
 
-app.listen(PORT, () => {
-  console.log(`server is running on port:${PORT}`);
-});
-
 app.use(notFound);
 app.use(errorHandler);
 
-const handler = serverless(app);
-module.exports = handler;
+app.listen(PORT, () => {
+  console.log(`server is running on port:${PORT}`);
+});
