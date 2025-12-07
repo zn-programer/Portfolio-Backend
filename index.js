@@ -86,6 +86,11 @@ app.delete(
       .json({ message: "the project has been deleted successfully" });
   })
 );
+
+app.listen(PORT, () => {
+  console.log(`server is running on port:${PORT}`);
+});
+
 app.use(notFound);
 app.use(errorHandler);
 
