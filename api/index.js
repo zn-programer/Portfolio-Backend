@@ -18,26 +18,21 @@ const connectToDb = require("../config/db");
 
 require("dotenv").config();
 // CONNECT TO DB
-connectToDb();
 app.use(express.json());
 console.log("this is my file");
 
 app.get(
   "/api/projects",
-  async (req, res) => { // حذفنا asyncHandler
-    try {
-      const projectsList = await Project.find();
-      console.log("Data fetched successfully.");
-      res.status(200).json(projectsList);
-    } catch (error) {
-      console.error("GET route failed:", error); // هذا سيظهر في سجلات Vercel
-      res.status(500).json({ message: "Error fetching data." });
-    }
-  }
+  asyncHandler(async (req, res) => {
+    await connectToDb();
+    const projectsList = await Project.find();
+    res.status(200).json(projectsList);
+  })
 );
 app.post(
   "/api/projects",
   asyncHandler(async (req, res) => {
+    await connectToDb();
     const { error } = validationCreateNewProject(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
@@ -56,6 +51,7 @@ app.post(
 app.put(
   "/api/projects/:id",
   asyncHandler(async (req, res) => {
+    await connectToDb();
     const { error } = validationUpdateProject(req.body);
     if (error) {
       return res.status(400).json({ message: error.details[0].message });
@@ -83,6 +79,7 @@ app.put(
 app.delete(
   "/api/projects/:id",
   asyncHandler(async (req, res) => {
+    await connectToDb();
     const deletedProject = await Project.findByIdAndDelete(req.params.id);
     if (!deletedProject) {
       return res.status(404).json({ message: "Project is not found" });
