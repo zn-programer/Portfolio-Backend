@@ -20,11 +20,11 @@ require("dotenv").config();
 // CONNECT TO DB
 app.use(express.json());
 console.log("this is my file");
-connectToDb();
 
 app.get(
   "/api/projects",
   asyncHandler(async (req, res) => {
+    await connectToDb();
     const projectsList = await Project.find();
     res.status(200).json(projectsList);
   })
