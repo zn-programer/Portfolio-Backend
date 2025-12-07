@@ -23,14 +23,14 @@ app.use(express.json());
 console.log("this is my file");
 
 app.get(
-  "/projects",
+  "/api/projects",
   asyncHandler(async (req, res) => {
     const projectsList = await Project.find();
     res.status(200).json(projectsList);
   })
 );
 app.post(
-  "/projects",
+  "/api/projects",
   asyncHandler(async (req, res) => {
     const { error } = validationCreateNewProject(req.body);
     if (error) {
@@ -48,7 +48,7 @@ app.post(
 );
 
 app.put(
-  "/projects/:id",
+  "/api/projects/:id",
   asyncHandler(async (req, res) => {
     const { error } = validationUpdateProject(req.body);
     if (error) {
@@ -75,7 +75,7 @@ app.put(
 );
 
 app.delete(
-  "/projects/:id",
+  "/api/projects/:id",
   asyncHandler(async (req, res) => {
     const deletedProject = await Project.findByIdAndDelete(req.params.id);
     if (!deletedProject) {
